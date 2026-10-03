@@ -29,6 +29,7 @@ enum FileOperation {
   POST = 1;
   PUT = 2;
   DELETE = 3;
+  MKDIR = 4; // create a directory, parents included; OK when it already exists
 }
 
 // Outcome of a file or directory operation. The requester must be able to
@@ -152,6 +153,12 @@ message I2CResult {
   bytes read_data = 2; // Data read from the device, empty for write-only transactions
 }
 
+// A tone on the buzzer. Fire and forget, like beep: there is no response.
+message BuzzerTone {
+  uint32 frequency_hz = 1; // 0 = silence, also stops a tone that is still playing
+  uint32 duration_ms = 2;  // 0 = until the next tone or beep
+}
+
 // Main message for interdevice communication
 message InterdeviceMessage {
   // Correlates a response with its request: responses echo the id of the
@@ -186,5 +193,7 @@ message InterdeviceMessage {
     // on its own and kept mounted; after one it stays released until a mount
     // is asked for.
     SdCommand sd_command = 14;
+    // Request: play a tone on the buzzer (no response)
+    BuzzerTone tone = 16;
   }
 }
